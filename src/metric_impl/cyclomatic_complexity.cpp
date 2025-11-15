@@ -1,23 +1,13 @@
 #include "metric_impl/cyclomatic_complexity.hpp"
 
-#include <unistd.h>
-
-#include <algorithm>
-#include <array>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <fstream>
-#include <functional>
-#include <iostream>
-#include <ranges>
-#include <sstream>
-#include <string>
-#include <variant>
-#include <vector>
+#include <print>
 
 namespace analyzer::metric::metric_impl {
-std::string CyclomaticComplexityMetric::Name() const { return kName; }
+
+std::string CyclomaticComplexityMetric::Name() const {
+    return kName; 
+}
+
 MetricResult::ValueType CyclomaticComplexityMetric::CalculateImpl(const function::Function &f) const {
     // Получаем строковое представление AST (абстрактного синтаксического дерева) функции.
     // Это S-выражение, сгенерированное утилитой tree-sitter, например:
@@ -30,18 +20,19 @@ MetricResult::ValueType CyclomaticComplexityMetric::CalculateImpl(const function
     // - циклы (for, while)
     // - обработка исключений (try, finally)
     // - case в match-выражениях
-    // - assert
     // - тернарный оператор (conditional_expression)
-    constexpr std::array<std::string_view, 9> complexity_nodes = {
-        "if_statement",            // if
-        "elif_statement",          // elif
-        "for_statement",           // for
-        "while_statement",         // while
-        "try_statement",           // try
-        "finally_clause",          // finally
-        "case_clause",             // case
-        "assert",                  // assert
-        "conditional_expression",  // для тернарного оператора
+
+    /// Add '(' symbol to preven looking for a node type name in the function name!
+    constexpr std::array<std::string_view, 8> complexity_nodes = {
+        "(if_statement",            // if
+        "(elif_clause",             // elif
+        "(for_statement",           // for
+        "(while_statement",         // while
+        "(try_statement",           // try
+        "(finally_clause",          // finally
+        /// Assert is ignored during cyclomatic complexity calculation
+        "(case_clause",             // case
+        "(conditional_expression",  // для тернарного оператора
     };
 
     // === ВАШ КОД ДОЛЖЕН БЫТЬ ЗДЕСЬ ===
@@ -65,5 +56,16 @@ MetricResult::ValueType CyclomaticComplexityMetric::CalculateImpl(const function
     // в цикле (это допустимо, так как вы работаете со строковым представлением AST,
     // а не с исходным кодом напрямую).
 
+    int complexity = 1;
+    const std::size_t initialPos = 0;
+
+    for (const auto &nodeType : complexity_nodes) {
+        std::size_t pos = initialPos;
+        while ((pos = function_ast.find(nodeType, pos)) != std::string_view::npos) {
+            complexity++;
+            pos += nodeType.size();
+        }
+    }
+    return complexity;
 }
 }  // namespace analyzer::metric::metric_impl

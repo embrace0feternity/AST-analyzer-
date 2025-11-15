@@ -48,8 +48,9 @@ using MetricResults = std::vector<MetricResult>;
 
 struct MetricExtractor {
     void RegisterMetric(std::unique_ptr<IMetric> metric);
-
+    
     MetricResults Get(const function::Function &func) const;
+
     std::vector<std::unique_ptr<IMetric>> metrics;
 };
 

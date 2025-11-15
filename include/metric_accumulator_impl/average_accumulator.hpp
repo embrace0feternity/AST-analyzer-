@@ -25,7 +25,7 @@ struct AverageAccumulator : public IAccumulator {
 
     void Finalize() override;
 
-    void Reset();
+    void Reset() override;
 
     double Get() const;
 

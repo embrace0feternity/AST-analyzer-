@@ -5,7 +5,7 @@ class MyMathClass():
         pass
 
     # make a strange name of the function
-    def if_statement_sum(self, a: int, b):
+    def IfStatementSum(self, a: int, b):
         if (a < b): 
             return a + b
         else:
@@ -13,7 +13,7 @@ class MyMathClass():
 
     # COMMON FUNCTION
     # Крч нужно изменить метод парсинга функций, чтобы проверять, имеется
-    #  ли self как первый аргумент или нет. Если есть - только тогда считать, 
+    #  ли self как первый аргумент или нет. Если есть, только тогда считать, 
     #  что функция - метод класса. Но мне лень
     def commonSum(a, b):
         return a + b

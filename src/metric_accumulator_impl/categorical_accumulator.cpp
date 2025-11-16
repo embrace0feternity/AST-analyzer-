@@ -20,8 +20,7 @@
 namespace analyzer::metric_accumulator::metric_accumulator_impl {
 
 void CategoricalAccumulator::Accumulate(const metric::MetricResult &metric_result) {
-    /// TODO make value as variant
-    // categories_freq[std::get<std::string>(metric_result.value)]++;
+    categories_freq[std::get<std::string>(metric_result.value)]++;
 }
 
 void CategoricalAccumulator::Finalize() { is_finalized = true; }

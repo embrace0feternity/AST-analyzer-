@@ -11,13 +11,12 @@ int main(int argc, char *argv[]) {
     analyzer::cmd::ProgramOptions options;
     if (!options.Parse(argc, argv))
         return 1;
-    /// Imitate parsing
     analyzer::metric::MetricExtractor metric_extractor{};
     
     using namespace analyzer::metric::metric_impl;
     metric_extractor.RegisterMetric(std::make_unique<CodeLinesCountMetric>());
     metric_extractor.RegisterMetric(std::make_unique<CyclomaticComplexityMetric>());
-    // metric_extractor.RegisterMetric(std::make_unique<NamingStyleMetric>());
+    metric_extractor.RegisterMetric(std::make_unique<NamingStyleMetric>());
     metric_extractor.RegisterMetric(std::make_unique<CountParametersMetric>());
 
     auto analysis = analyzer::AnalyseFunctions(options.GetFiles(), metric_extractor);
@@ -29,15 +28,14 @@ int main(int argc, char *argv[]) {
                      (function.class_name.has_value() ? function.class_name.value() + "::" : ""), function.name);
         std::ranges::for_each(metrics, [&](const auto &result) {
             std::print("    {}: ", result.metric_name);
-            std::println("{}", result.value);
-            // std::visit([](auto &&val) { std::println("{}", val); }, result.value);
+            std::visit([](auto &&val) { std::println("{}", val); }, result.value);
         });
     });
 
     analyzer::metric_accumulator::MetricsAccumulator accumulator;
     using namespace analyzer::metric_accumulator::metric_accumulator_impl;
     accumulator.RegisterAccumulator(CyclomaticComplexityMetric::kName, std::make_unique<SumAverageAccumulator>());
-    // accumulator.RegisterAccumulator(NamingStyleMetric::kName, std::make_unique<CategoricalAccumulator>());
+    accumulator.RegisterAccumulator(NamingStyleMetric::kName, std::make_unique<CategoricalAccumulator>());
     accumulator.RegisterAccumulator(CodeLinesCountMetric::kName, std::make_unique<SumAverageAccumulator>());
     accumulator.RegisterAccumulator(CountParametersMetric::kName, std::make_unique<AverageAccumulator>());
 
@@ -46,11 +44,11 @@ int main(int argc, char *argv[]) {
             accumulator.template GetFinalizedAccumulator<SumAverageAccumulator>(CyclomaticComplexityMetric::kName);
         std::println("    Sum Cyclomatic Complexity: {}", cc_acc_metric.Get().sum);
         std::println("    Average Cyclomatic Complexity per function: {}", cc_acc_metric.Get().average);
-        // auto &naming_acc_metric =
-        //     accumulator.template GetFinalizedAccumulator<CategoricalAccumulator>(NamingStyleMetric::kName);
-        // std::ranges::for_each(naming_acc_metric.Get(), [](const auto &elem) {
-        //     std::println("    Naming style '{}' is occured {} times", elem.first, elem.second);
-        // });
+        auto &naming_acc_metric =
+            accumulator.template GetFinalizedAccumulator<CategoricalAccumulator>(NamingStyleMetric::kName);
+        std::ranges::for_each(naming_acc_metric.Get(), [](const auto &elem) {
+            std::println("    Naming style '{}' is occured {} times", elem.first, elem.second);
+        });
         auto &cl_acc_metric =
             accumulator.template GetFinalizedAccumulator<SumAverageAccumulator>(CodeLinesCountMetric::kName);
         std::println("    Sum Code lines count: {}", cl_acc_metric.Get().sum);

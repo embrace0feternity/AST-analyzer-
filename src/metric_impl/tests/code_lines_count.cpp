@@ -40,7 +40,7 @@ TEST_F(CodeLinesCountGroup, comments) {
     auto &[function, result] = analysis.front();
     EXPECT_EQ(function.name, "Func_comments");
     EXPECT_EQ(result[0].metric_name, CodeLinesCountMetric::kName);
-    EXPECT_EQ(result[0].value, 3);
+    EXPECT_EQ(std::get<int>(result[0].value), 3);
 }
 
 ///
@@ -57,7 +57,7 @@ TEST_F(CodeLinesCountGroup, commentsSeveralFiles) {
 
     auto values = analysis | std::views::values | std::views::join;
     auto codeLines = std::ranges::fold_left(values, 0, [](int init, const auto &metric){
-        return init + metric.value;
+        return init + std::get<int>(metric.value);;
     });
 
     EXPECT_EQ(8, codeLines);

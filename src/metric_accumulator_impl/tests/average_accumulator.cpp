@@ -59,7 +59,7 @@ TEST_F(AverageAccumulatorGroup, codeLines)
                 });
 
     auto codeLines = std::ranges::fold_left(metrics, 0, [](std::size_t init, const metric::MetricResult &metric){
-        return init + metric.value;
+        return init + std::get<int>(metric.value);
     });
     EXPECT_DOUBLE_EQ(static_cast<double>(codeLines) / analysis.size(), accCodeCount.Get());
 
@@ -70,7 +70,7 @@ TEST_F(AverageAccumulatorGroup, codeLines)
 
     std::ranges::for_each(
         metrics, 
-        [newValue = analysis.size()](int &v){ v = newValue; }, 
+        [newValue = analysis.size()](auto &v){ std::get<int>(v) = newValue; }, 
         &metric::MetricResult::value
     );
 
@@ -96,7 +96,7 @@ TEST_F(AverageAccumulatorGroup, complexity)
                 });
 
     auto complexity = std::ranges::fold_left(metrics, 0, [](std::size_t init, const metric::MetricResult &metric){
-        return init + metric.value;
+        return init + std::get<int>(metric.value);;
     });
     EXPECT_DOUBLE_EQ(static_cast<double>(complexity) / analysis.size(), accComplexity.Get());
     EXPECT_EQ(6, complexity);

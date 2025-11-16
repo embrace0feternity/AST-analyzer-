@@ -34,7 +34,7 @@ TEST_F(CyclomaticComplexityGroup, commentFunctionComplexity) {
     auto &[function, result] = analysis.front();
     EXPECT_EQ(function.name, "Func_comments");
     EXPECT_EQ(result[0].metric_name, CyclomaticComplexityMetric::kName);
-    EXPECT_EQ(result[0].value, 1);
+    EXPECT_EQ(std::get<int>(result[0].value), 1);
 }
 
 ///
@@ -56,7 +56,7 @@ TEST_F(CyclomaticComplexityGroup, exceptionFunctionComplexity) {
     EXPECT_EQ(function.name, "Try_Exceptions");
     EXPECT_EQ(result[0].metric_name, CyclomaticComplexityMetric::kName);
     /// Try, finally
-    EXPECT_EQ(result[0].value, 3);
+    EXPECT_EQ(std::get<int>(result[0].value), 3);
 }
 
 ///
@@ -78,7 +78,7 @@ TEST_F(CyclomaticComplexityGroup, ifFunctionComplexity) {
     EXPECT_EQ(function.name, "testIf");
     EXPECT_EQ(result[0].metric_name, CyclomaticComplexityMetric::kName);
     /// Only 1 if
-    EXPECT_EQ(result[0].value, 2);
+    EXPECT_EQ(std::get<int>(result[0].value), 2);
 }
 
 ///
@@ -100,7 +100,7 @@ TEST_F(CyclomaticComplexityGroup, loopsFunctionComplexity) {
     EXPECT_EQ(function.name, "TestLoops");
     EXPECT_EQ(result[0].metric_name, CyclomaticComplexityMetric::kName);
     /// For, while, if
-    EXPECT_EQ(result[0].value, 4);
+    EXPECT_EQ(std::get<int>(result[0].value), 4);
 }
 
 ///
@@ -122,7 +122,7 @@ TEST_F(CyclomaticComplexityGroup, switchFunctionComplexity) {
     EXPECT_EQ(function.name, "test_Match_case");
     EXPECT_EQ(result[0].metric_name, CyclomaticComplexityMetric::kName);
     /// 3 cases
-    EXPECT_EQ(result[0].value, 4);
+    EXPECT_EQ(std::get<int>(result[0].value), 4);
 }
 
 ///
@@ -144,7 +144,7 @@ TEST_F(CyclomaticComplexityGroup, nestedIfFunctionComplexity) {
     EXPECT_EQ(function.name, "Testnestedif");
     EXPECT_EQ(result[0].metric_name, CyclomaticComplexityMetric::kName);
     /// if, nested if, elseif
-    EXPECT_EQ(result[0].value, 4);
+    EXPECT_EQ(std::get<int>(result[0].value), 4);
 }
 
 ///
@@ -166,7 +166,7 @@ TEST_F(CyclomaticComplexityGroup, ternaryFunctionComplexity) {
     EXPECT_EQ(function.name, "teSt_ternary");
     EXPECT_EQ(result[0].metric_name, CyclomaticComplexityMetric::kName);
     /// ternary operator, nested ternary operator
-    EXPECT_EQ(result[0].value, 3);
+    EXPECT_EQ(std::get<int>(result[0].value), 3);
 }
 
 ///
@@ -191,7 +191,7 @@ TEST_F(CyclomaticComplexityGroup, functionName) {
                 std::views::join;
 
     auto complexity = std::ranges::fold_left(metrics, 0, [](std::size_t init, const metric::MetricResult &metric){
-        return init + metric.value;
+        return init + std::get<int>(metric.value);
     });
 
     EXPECT_EQ(complexity, 5);
@@ -223,7 +223,7 @@ TEST_F(CyclomaticComplexityGroup, allFunctionsComplexity) {
     auto values = analysis | std::views::values | std::views::join;
 
     auto complexity = std::ranges::fold_left(values, 0, [](std::size_t init, const metric::MetricResult &metric){
-        return init + metric.value;
+        return init + std::get<int>(metric.value);
     });
     EXPECT_EQ(21, complexity);
 }

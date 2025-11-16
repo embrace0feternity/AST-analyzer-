@@ -59,7 +59,7 @@ MetricResult::ValueType CodeLinesCountMetric::CalculateImpl(const function::Func
     auto codelines = std::views::iota(start_line + 1, end_line + 1) |  
         std::views::filter([&](int line) { return is_code_line(line); });
 
-    return std::ranges::distance(codelines);                    
+    return static_cast<int>(std::ranges::distance(codelines));
 }
 
 }  // namespace analyzer::metric::metric_impl

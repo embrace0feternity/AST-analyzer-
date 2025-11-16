@@ -35,7 +35,7 @@ TEST_F(ParametersCountGroup, commentFunctionParameterCount) {
     auto &[function, result] = analysis.front();
     EXPECT_EQ(function.name, "Func_comments");
     EXPECT_EQ(result[0].metric_name, CountParametersMetric::kName);
-    EXPECT_EQ(result[0].value, 3);
+    EXPECT_EQ(std::get<int>(result[0].value), 3);
 }
 
 ///
@@ -57,7 +57,7 @@ TEST_F(ParametersCountGroup, exceptionFunctionParameterCount) {
     auto &[function, result] = analysis.front();
     EXPECT_EQ(function.name, "Try_Exceptions");
     EXPECT_EQ(result[0].metric_name, CountParametersMetric::kName);
-    EXPECT_EQ(result[0].value, 0);
+    EXPECT_EQ(std::get<int>(result[0].value), 0);
 }
 
 ///
@@ -79,7 +79,7 @@ TEST_F(ParametersCountGroup, manyParamFunctionParameterCount) {
     auto &[function, result] = analysis.front();
     EXPECT_EQ(function.name, "__test_multiparameters__");
     EXPECT_EQ(result[0].metric_name, CountParametersMetric::kName);
-    EXPECT_EQ(result[0].value, 5);
+    EXPECT_EQ(std::get<int>(result[0].value), 5);
 }
 
 ///
@@ -104,7 +104,7 @@ TEST_F(ParametersCountGroup, severalFilesParameterCount) {
     auto values = analysis | std::views::values | std::views::join;
 
     auto complexity = std::ranges::fold_left(values, 0, [](std::size_t init, const metric::MetricResult &metric){
-        return init + metric.value;
+        return init + std::get<int>(metric.value);;
     });
     EXPECT_EQ(8, complexity);
 }

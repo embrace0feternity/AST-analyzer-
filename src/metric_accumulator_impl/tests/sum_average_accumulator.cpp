@@ -46,7 +46,7 @@ TEST_F(SumAverageAccumulatorGroup, parameters)
                 std::views::join;
 
     auto parameters = std::ranges::fold_left(metrics, 0, [](std::size_t init, const metric::MetricResult &metric){
-        return init + metric.value;
+        return init + std::get<int>(metric.value);;
     });
     auto sumAverage = accParameters.Get();
     EXPECT_DOUBLE_EQ(static_cast<double>(parameters) / analysis.size(), sumAverage.average);

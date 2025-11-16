@@ -1,18 +1,15 @@
-set(target metric_accumulator_test)
-
-add_executable(${target}
+add_executable(metric_accumulator_test
     tests/average_accumulator.cpp
     tests/categorical_accumulator.cpp
     tests/sum_average_accumulator.cpp
 )
 
-target_link_libraries(${target}
+target_link_libraries(metric_accumulator_test
     PRIVATE
         GTest::GTest
         GTest::Main
         metric_accumulator
-        function
-        file
+        metric
 )
 
-add_test(NAME ${target} COMMAND ${target})
+add_test(NAME metric_accumulator_test COMMAND metric_accumulator_test)

@@ -7,6 +7,7 @@
 #include <ranges>
 #include <string>
 #include <vector>
+#include <print>
 
 namespace analyzer::file {
 
@@ -52,7 +53,7 @@ std::string File::GetAst(const std::string &filename) try {
                                             throw std::runtime_error("Command terminated abnormally");
                                         }
                                     })>;
-
+                                    
     FILE *raw_pipe = popen(full_cmd.c_str(), "r");
     if (!raw_pipe) {
         throw std::runtime_error("Failed to execute command: " + std::string(std::strerror(errno)));
